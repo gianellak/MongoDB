@@ -23,18 +23,13 @@ public class ConsultaMongo {
 
 		
 
-		String map = "function(){" +
-			"var key = this.idCliente;" +
-			"if (this.tipo = 'D'){" +
-			" var value = (this.monto *= (-1))}" +
-			"else {var value = this.monto};" +
-			"emit(key, {count:value}); };";
-		
-		String reduce = "function(key, values){total= 0;"
-				+ "for(var k in key){"
-				+ "for(var i in values){"
-				+ "total+=values[i].count;}"
-				+ "return total;} }";
+		String map = "function() {" + "	if(this.tipo == 'D') " + 
+				"{saldo = (-1) * this.monto;}" + 
+				"else{saldo = this.monto;}" + 
+				"{emit(this.idCliente,saldo);} }";
+
+		String reduce = "function(key, values)"
+				+ " { return Array.sum(values)};";
 		
 		MapReduceCommand cmd = new MapReduceCommand(coll, map, reduce,
             null, MapReduceCommand.OutputType.INLINE, null);
